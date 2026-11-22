@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shree Hari Nadig B M</title>
+<meta name="description" content="Backend-focused Java engineer in Bangalore. REST APIs, AWS SQS, PostgreSQL, Snowflake.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: one reading column; a hamburger at top left opens a slide-in contents drawer. */
+:root {
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --ink: #101820;
+  --muted: #55606b;
+  --line: #d9dfe5;
+  --accent: #0b6e6b;
+  --accent-soft: #dcefee;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1418; --surface: #151d23; --ink: #e8eef2; --muted: #98a5b0;
+    --line: #27323a; --accent: #5fd3cc; --accent-soft: #14312f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1418; --surface: #151d23; --ink: #e8eef2; --muted: #98a5b0;
+  --line: #27323a; --accent: #5fd3cc; --accent-soft: #14312f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  background-image: radial-gradient(900px 480px at 12% -8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%);
+  background-attachment: fixed;
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, .btn:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; line-height: 1.15; }
+p { margin: 0; }
+
+#net { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+#progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--accent); z-index: 40; }
+
+/* Menu button and drawer */
+.menu-btn {
+  position: fixed; top: 14px; left: 14px; z-index: 30; width: 46px; height: 46px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
+  display: grid; place-items: center; padding: 0;
+  transition: border-color .15s, color .15s;
+}
+.menu-btn:hover { border-color: var(--accent); color: var(--accent); }
+.menu-btn span, .menu-btn span::before, .menu-btn span::after {
+  display: block; width: 20px; height: 2px; background: currentColor; border-radius: 2px; position: relative; content: "";
+}
+.menu-btn span::before { position: absolute; top: -6px; left: 0; }
+.menu-btn span::after { position: absolute; top: 6px; left: 0; }
+.scrim {
+  position: fixed; inset: 0; z-index: 50; background: rgba(8, 14, 18, 0.55);
+  opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s;
+}
+.drawer {
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 60; width: min(320px, 86vw);
+  background: var(--surface); border-right: 1px solid var(--line);
+  padding: 24px 22px; display: flex; flex-direction: column; gap: 24px; overflow-y: auto;
+  transform: translateX(-102%); visibility: hidden;
+  transition: transform .28s ease, visibility .28s;
+}
+body.open .scrim { opacity: 1; visibility: visible; }
+body.open .drawer { transform: none; visibility: visible; }
+.drawer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.drawer-name { font-family: var(--font-display); font-weight: 700; font-size: 20px; line-height: 1.2; }
+.drawer-sub { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-top: 4px; }
+.close-btn {
+  flex: none; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line);
+  background: transparent; color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer;
+}
+.close-btn:hover { border-color: var(--accent); color: var(--accent); }
+nav { display: flex; flex-direction: column; gap: 2px; counter-reset: toc; }
+.toc-title { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+nav a {
+  counter-increment: toc; display: flex; gap: 12px; align-items: baseline; padding: 9px 12px;
+  color: var(--ink); text-decoration: none; font-size: 16px; border-left: 2px solid var(--line);
+  transition: color .15s, border-color .15s, background .15s;
+}
+nav a::before { content: counter(toc, decimal-leading-zero); font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+nav a:hover { color: var(--accent); background: var(--accent-soft); }
+nav a.active { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+nav a.active::before { color: var(--accent); }
+.drawer-foot { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-block; padding: 8px 14px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--surface); color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 500;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn.primary:hover { color: var(--bg); filter: brightness(1.08); }
+.theme {
+  align-self: flex-start; cursor: pointer; font: inherit; font-family: var(--font-mono); font-size: 12px;
+  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+}
+.theme:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Page */
+.wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 88px 24px 80px; }
+main { display: flex; flex-direction: column; gap: 72px; min-width: 0; }
+section { display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 24px; animation: rise .6s ease both; }
+@keyframes rise { from { transform: translateY(14px); } to { transform: none; } }
+h2.label {
+  font-family: var(--font-mono); font-weight: 500; font-size: 13px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+}
+.lead { font-size: 22px; line-height: 1.45; max-width: 36em; font-family: var(--font-display); font-weight: 500; }
+.about p.body { max-width: 42em; color: var(--muted); }
+
+.hero { gap: 28px; }
+.eyebrow { font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
+.name {
+  font-size: clamp(38px, 7vw, 64px); font-weight: 700; letter-spacing: -0.03em;
+  background: linear-gradient(100deg, var(--ink) 55%, var(--accent));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.role { color: var(--muted); font-size: 19px; max-width: 30em; }
+.status {
+  display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface);
+  font-family: var(--font-mono); font-size: 12px; color: var(--muted);
+}
+.status i {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  animation: pulse 2.2s ease-out infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 9px transparent; }
+}
+.hero-line { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: clamp(24px, 4vw, 34px); line-height: 1.15; }
+.toolgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 28px; }
+.toolgrid h3 { font-family: var(--font-mono); font-weight: 500; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span {
+  font-family: var(--font-mono); font-size: 13px; padding: 5px 11px; border-radius: 6px;
+  background: var(--surface); border: 1px solid var(--line); color: var(--ink);
+  transition: border-color .15s, color .15s, transform .15s;
+}
+.chips span:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.metric {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px;
+  display: flex; flex-direction: column; gap: 4px; min-width: 0;
+}
+.metric b { font-family: var(--font-display); font-size: 32px; line-height: 1; font-variant-numeric: tabular-nums; color: var(--accent); }
+.metric span { font-size: 13px; color: var(--muted); line-height: 1.35; }
+
+.stat {
+  display: flex; gap: 20px; flex-wrap: wrap; align-items: baseline;
+  border-left: 3px solid var(--accent); padding: 4px 0 4px 16px;
+}
+.stat b {
+  font-family: var(--font-display); font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums;
+  background: linear-gradient(100deg, var(--accent), var(--ink)); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stat span { color: var(--muted); font-size: 14px; max-width: 30em; }
+
+.card {
+  background-color: var(--surface);
+  background-image: radial-gradient(320px circle at var(--mx, -400px) var(--my, -400px), color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
+  border: 1px solid var(--line); border-radius: 8px; padding: 24px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.card:hover {
+  transform: translateY(-3px); border-color: var(--accent);
+  box-shadow: 0 14px 34px -18px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.card h3 { font-size: 21px; }
+.card h4 { font-family: var(--font-mono); font-weight: 500; font-size: 13px; margin: 8px 0 0; color: var(--accent); }
+.meta { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+.card ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+.card li { max-width: 46em; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; }
+.tags span {
+  font-family: var(--font-mono); font-size: 12px; padding: 3px 9px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent); transition: background .15s, color .15s;
+}
+.tags span:hover { background: var(--accent); color: var(--bg); }
+.stack { display: flex; flex-direction: column; gap: 16px; position: relative; padding-left: 28px; }
+.stack::before {
+  content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px;
+  background: linear-gradient(var(--accent), var(--line));
+}
+.stack > .card { position: relative; }
+.stack > .card::before {
+  content: ""; position: absolute; left: -29px; top: 28px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--accent);
+}
+dl.skills { display: grid; grid-template-columns: 150px 1fr; gap: 14px 24px; margin: 0; }
+dl.skills dt { font-family: var(--font-mono); font-size: 13px; color: var(--muted); padding-top: 2px; }
+dl.skills dd { margin: 0; }
+.edu { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer { color: var(--muted); font-size: 14px; }
+
+@media (max-width: 700px) {
+  .wrap { padding: 80px 16px 56px; }
+  .toolgrid { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  dl.skills { grid-template-columns: 1fr; gap: 4px; }
+  dl.skills dd { margin-bottom: 12px; }
+  .stack { padding-left: 22px; }
+  .stack > .card::before { left: -23px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  section { animation: none; } .status i { animation: none; }
+  .card, .drawer, .scrim { transition: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="net" aria-hidden="true"></canvas>
+<div id="progress" aria-hidden="true"></div>
+
+<button class="menu-btn" id="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="drawer"><span></span></button>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Navigation" aria-hidden="true">
+  <div class="drawer-head">
+    <div>
+      <div class="drawer-name">Shree Hari Nadig B M</div>
+      <div class="drawer-sub">Backend engineer · Bangalore</div>
+    </div>
+    <button class="close-btn" id="close" type="button" aria-label="Close navigation">×</button>
+  </div>
+  <nav aria-label="Table of contents">
+    <span class="toc-title">Contents</span>
+    <a href="#top">Overview</a>
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="drawer-foot">
+    <div class="links">
+      <a class="btn" href="https://github.com/Shreeharinadig">GitHub</a>
+      <a class="btn" href="https://www.linkedin.com/in/shree-hari-nadig-04a937225">LinkedIn</a>
+    </div>
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark theme">Switch theme</button>
+  </div>
+</aside>
+
+<div class="wrap">
+  <main>
+    <section id="top" class="hero">
+      <p class="eyebrow">Hello, I'm</p>
+      <h1 class="name">Shree Hari Nadig B M</h1>
+      <p class="role">Backend-focused Java engineer. REST APIs, AWS SQS, PostgreSQL and Snowflake.</p>
+      <p class="status"><i aria-hidden="true"></i>Open to Backend SDE roles</p>
+      <div class="links">
+        <a class="btn primary" href="mailto:bmshreeharinadig@gmail.com">Email me</a>
+        <a class="btn" href="https://github.com/Shreeharinadig">GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/in/shree-hari-nadig-04a937225">LinkedIn</a>
+      </div>
+      <p class="hero-line">Experienced in the tools behind production backends.</p>
+      <div class="toolgrid">
+        <div><h3>Languages</h3><div class="chips"><span>Java</span><span>Python</span><span>TypeScript</span><span>JavaScript</span><span>SQL</span><span>C++</span></div></div>
+        <div><h3>Backend</h3><div class="chips"><span>JAX-RS</span><span>Spring Boot</span><span>Spring Data JPA</span><span>Hibernate</span><span>Spring Security</span><span>MyBatis</span><span>Node.js</span><span>Express</span><span>JWT</span><span>RBAC</span></div></div>
+        <div><h3>Data and messaging</h3><div class="chips"><span>PostgreSQL (JSONB)</span><span>Snowflake</span><span>MongoDB</span><span>MySQL</span><span>Neo4j</span><span>AWS SQS</span><span>AWS S3</span><span>AWS EC2</span><span>AWS Lambda</span><span>RabbitMQ</span><span>Airflow</span></div></div>
+        <div><h3>Testing and tooling</h3><div class="chips"><span>Playwright</span><span>Selenium Grid</span><span>RestAssured</span><span>TestNG</span><span>Docker</span><span>Jenkins</span><span>Git</span><span>Maven</span><span>Jira REST API</span></div></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><b data-count="1000" data-suffix="+">1,000+</b><span>pull requests merged across 3 repos</span></div>
+        <div class="metric"><b data-count="50">50</b><span>pluggable per-report access handlers</span></div>
+        <div class="metric"><b data-count="15" data-suffix="+">15+</b><span>adapters in the verification service</span></div>
+        <div class="metric"><b data-count="8">8</b><span>report languages, including right-to-left Arabic</span></div>
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <h2 class="label">About</h2>
+      <p class="lead">Backend-focused Java engineer with about 2 years building a multi-tenant reporting platform for a fleet-safety SaaS product.</p>
+      <p class="body">My work spans Java (JAX-RS, Spring, MyBatis) REST services, queue-driven asynchronous processing on AWS SQS, role-based access control, PostgreSQL and Snowflake. I deliver features end to end: APIs, JSONB-based migrations, scheduling and third-party integrations. I also built a TypeScript and Node.js data-verification platform that cut release verification from about 21 hours to about 1.5 hours. I'm looking for a Backend SDE role.</p>
+    </section>
+
+    <section id="experience">
+      <h2 class="label">Experience</h2>
+      <div class="stat" role="note">
+        <b>~21 h → ~1.5 h</b>
+        <span>Release-time database verification of about 50 reports, from roughly 25 minutes each by hand to under two hours with the verification platform I built.</span>
+      </div>
+
+      <div class="stack">
+        <article class="card">
+          <h3>Software Engineer</h3>
+          <p class="meta">Netradyne · Jul 2025 to present</p>
+          <h4>Backend</h4>
+          <ul>
+            <li>Worked on the development of the report-list REST API: a permission-gated endpoint that returns a user's generated reports per tenant and report type, with status and S3 download links.</li>
+            <li>Worked on a Role-Based Access Control (RBAC) API using a strategy and registry pattern with 50 pluggable per-report handlers. It resolves access from roles, subscription tiers and per-tenant overrides, loads config once per request for low latency, and fixed a cross-tenant contamination bug by keeping request context strictly per request.</li>
+            <li>Extended the report pipeline (REST API, DTO, persisted request, SQS, worker) for tenant-timezone custom date ranges with range limits and custom start hours.</li>
+            <li>Wrote idempotent PostgreSQL migrations (JSONB config merges) for report config, access rules and localization: per-tenant overrides and 8 languages, including right-to-left Arabic.</li>
+            <li>Worked on scheduled report delivery: an hourly Airflow scheduler sends daily, weekly, monthly and quarterly subscriptions at each tenant's local time through SQS fan-out and email.</li>
+            <li>Built a third-party license-provisioning workflow for an embedded BI product. REST APIs reserve the license in the CRM (Pending) and publish to SQS. A consumer provisions or removes users through the vendor API and reports Success or Failure. Added usage tracking, short-lived JWT SSO and a scheduled job that revokes access for deactivated users.</li>
+            <li>Owned release assembly across 3 repos (Java, Python, Angular): merged 1,000+ PRs, resolved conflicts and rolled back regressions.</li>
+          </ul>
+          <div class="tags"><span>Java</span><span>JAX-RS</span><span>Spring Boot</span><span>MyBatis</span><span>PostgreSQL (JSONB)</span><span>AWS SQS/S3</span><span>Airflow</span><span>JWT</span><span>Python</span></div>
+
+          <h4>Data-verification platform</h4>
+          <ul>
+            <li>Built a verification service on an adapter pattern (15+ adapters across PostgreSQL, Snowflake and REST; 20+ parameterized SQL modules) that diffs rows on composite keys at field level. It cut release-time database verification of about 50 reports from about 21 hours of manual checks (about 25 minutes each) to about 1.5 hours.</li>
+            <li>Added end-to-end UI validation (Playwright) integrated with the backend checks. For example, it shuffles report columns in the request UI, captures the chosen order and verifies the generated report preserves it.</li>
+            <li>Built a parity checker that validates the PostgreSQL-to-Snowflake report-engine migration, plus an Express dashboard that runs jobs, exports PDFs through headless Chromium and files Jira bugs.</li>
+            <li>Used Claude Code, Cursor and GitHub Copilot to draft features and bug-fix PRs, and reviewed all AI-generated code myself.</li>
+          </ul>
+          <div class="tags"><span>TypeScript</span><span>Node.js</span><span>Express</span><span>Playwright</span><span>Snowflake</span></div>
+        </article>
+
+        <article class="card">
+          <h3>Intern, Cloud</h3>
+          <p class="meta">Netradyne · Jan 2025 to Jun 2025</p>
+          <ul>
+            <li>Built a Java (RestAssured and TestNG) harness for about 25 public REST APIs, verifying each call against the PostgreSQL API request log and covering OAuth flows.</li>
+          </ul>
+          <div class="tags"><span>Java</span><span>RestAssured</span><span>TestNG</span><span>PostgreSQL</span><span>OAuth</span></div>
+        </article>
+
+        <article class="card">
+          <h3>Summer Intern</h3>
+          <p class="meta">CoDMAV, PES University · Jun 2024 to Jul 2024</p>
+          <ul>
+            <li>Built the backend of a research-collaborator recommendation engine on a Neo4j graph (Node.js and Express REST APIs, React frontend), used by faculty.</li>
+          </ul>
+          <div class="tags"><span>Node.js</span><span>Express</span><span>Neo4j</span><span>React</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="projects">
+      <h2 class="label">Projects</h2>
+      <article class="card">
+        <h3>InventoryTrack</h3>
+        <p class="meta">Node.js · RabbitMQ · MongoDB · Docker</p>
+        <p>A microservices inventory system. Separate inventory, stock and order services talk to each other asynchronously over RabbitMQ, each in its own Docker container, with MongoDB-backed CRUD APIs.</p>
+        <div class="tags"><span>Microservices</span><span>RabbitMQ</span><span>MongoDB</span><span>Docker</span></div>
+      </article>
+      <p class="meta">More on <a href="https://github.com/Shreeharinadig">GitHub</a>.</p>
+    </section>
+
+    <section id="skills">
+      <h2 class="label">Skills</h2>
+      <dl class="skills">
+        <dt>Languages</dt><dd>Java, Python, SQL, TypeScript, JavaScript, C++</dd>
+        <dt>Core</dt><dd>OOP, data structures and algorithms, design patterns (Strategy, Adapter), REST API design, asynchronous messaging, RBAC, JWT authentication</dd>
+        <dt>Backend and data</dt><dd>Java (Spring Boot, Spring Data JPA, Hibernate, Spring Security, JAX-RS), MyBatis, Node.js, Express.js, PostgreSQL (JSONB), Snowflake, MongoDB, MySQL, Neo4j, RabbitMQ, AWS (SQS, S3, EC2, Lambda), Airflow</dd>
+        <dt>Tools</dt><dd>Docker, Jenkins, Git, Maven, Jira REST API, TestNG, RestAssured, Playwright, Selenium Grid</dd>
+      </dl>
+    </section>
+
+    <section id="education">
+      <h2 class="label">Education</h2>
+      <article class="card">
+        <div class="edu">
+          <h3>B.Tech, Computer Science and Engineering</h3>
+          <span class="meta">2021 to 2025</span>
+        </div>
+        <p>PES University. CGPA 9.24. Prof. CNR Rao Scholarship (top 5%) and Prof. MRD Scholarship (top 20%).</p>
+      </article>
+    </section>
+
+    <section id="contact">
+      <h2 class="label">Contact</h2>
+      <p class="lead">Hiring for a backend role? I'd like to hear about it.</p>
+      <p class="meta">bmshreeharinadig@gmail.com · Bangalore, India</p>
+      <div class="links">
+        <a class="btn primary" href="mailto:bmshreeharinadig@gmail.com">Email me</a>
+        <a class="btn" href="https://www.linkedin.com/in/shree-hari-nadig-04a937225">LinkedIn</a>
+        <a class="btn" href="https://github.com/Shreeharinadig">GitHub</a>
+      </div>
+    </section>
+    <footer>© 2026 Shree Hari Nadig B M</footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Reading progress bar.
+  var bar = document.getElementById("progress");
+  function onScroll() {
+    var max = root.scrollHeight - root.clientHeight;
+    bar.style.width = (max > 0 ? (root.scrollTop / max) * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // Navigation drawer.
+  var menu = document.getElementById("menu"), drawer = document.getElementById("drawer");
+  function setOpen(open) {
+    document.body.classList.toggle("open", open);
+    menu.setAttribute("aria-expanded", open ? "true" : "false");
+    drawer.setAttribute("aria-hidden", open ? "false" : "true");
+    if (open) { document.getElementById("close").focus(); } else { menu.focus(); }
+  }
+  menu.addEventListener("click", function () { setOpen(true); });
+  document.getElementById("close").addEventListener("click", function () { setOpen(false); });
+  document.getElementById("scrim").addEventListener("click", function () { setOpen(false); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && document.body.classList.contains("open")) { setOpen(false); }
+  });
+  var links = Array.prototype.slice.call(drawer.querySelectorAll("nav a"));
+  links.forEach(function (a) {
+    a.addEventListener("click", function () {
+      document.body.classList.remove("open");
+      menu.setAttribute("aria-expanded", "false");
+      drawer.setAttribute("aria-hidden", "true");
+    });
+  });
+
+  // Highlight the section being read.
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id);
+          });
+        }
+      });
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
+  }
+
+  // Theme switch.
+  document.getElementById("theme").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme") === "dark" ||
+      (!root.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    root.setAttribute("data-theme", dark ? "light" : "dark");
+  });
+
+  // Count-up metrics.
+  if (!reduce && "IntersectionObserver" in window) {
+    var co = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        co.unobserve(e.target);
+        var el = e.target, end = +el.dataset.count, suf = el.dataset.suffix || "", t0 = performance.now();
+        (function step(t) {
+          var k = Math.min(1, (t - t0) / 1100), v = Math.round(end * (1 - Math.pow(1 - k, 3)));
+          el.textContent = v.toLocaleString("en-US") + (k === 1 ? suf : "");
+          if (k < 1) requestAnimationFrame(step);
+        })(t0);
+      });
+    });
+    document.querySelectorAll("[data-count]").forEach(function (b) { co.observe(b); });
+  }
+
+  // Card spotlight follows the pointer.
+  document.querySelectorAll(".card").forEach(function (c) {
+    c.addEventListener("pointermove", function (ev) {
+      var r = c.getBoundingClientRect();
+      c.style.setProperty("--mx", (ev.clientX - r.left) + "px");
+      c.style.setProperty("--my", (ev.clientY - r.top) + "px");
+    });
+    c.addEventListener("pointerleave", function () {
+      c.style.removeProperty("--mx"); c.style.removeProperty("--my");
+    });
+  });
+
+  // Network background: drifting nodes joined by faint lines, pulled slightly toward the pointer.
+  var cv = document.getElementById("net"), cx = cv.getContext("2d");
+  var W = 0, H = 0, dpr = 1, nodes = [], mouse = { x: -999, y: -999 };
+  function size() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var n = Math.max(24, Math.min(70, Math.floor(W * H / 22000)));
+    nodes = [];
+    for (var i = 0; i < n; i++) {
+      nodes.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.25 });
+    }
+  }
+  function draw() {
+    var col = getComputedStyle(root).getPropertyValue("--accent").trim() || "#0b6e6b";
+    cx.clearRect(0, 0, W, H);
+    cx.fillStyle = col; cx.strokeStyle = col;
+    for (var i = 0; i < nodes.length; i++) {
+      var a = nodes[i];
+      if (!reduce) {
+        a.x += a.vx; a.y += a.vy;
+        if (a.x < 0 || a.x > W) a.vx *= -1;
+        if (a.y < 0 || a.y > H) a.vy *= -1;
+        var dx = mouse.x - a.x, dy = mouse.y - a.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 160 && d > 1) { a.x += dx / d * 0.35; a.y += dy / d * 0.35; }
+      }
+      cx.globalAlpha = 0.35;
+      cx.beginPath(); cx.arc(a.x, a.y, 1.8, 0, 6.2832); cx.fill();
+      for (var j = i + 1; j < nodes.length; j++) {
+        var b = nodes[j], ex = a.x - b.x, ey = a.y - b.y, dd = ex * ex + ey * ey;
+        if (dd < 14400) {
+          cx.globalAlpha = 0.16 * (1 - dd / 14400);
+          cx.beginPath(); cx.moveTo(a.x, a.y); cx.lineTo(b.x, b.y); cx.stroke();
+        }
+      }
+    }
+    cx.globalAlpha = 1;
+  }
+  size(); draw();
+  window.addEventListener("resize", function () { size(); draw(); });
+  if (!reduce) {
+    window.addEventListener("pointermove", function (e) { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+    (function loop() { if (!document.hidden) draw(); requestAnimationFrame(loop); })();
+  }
+})();
+</script>
+</body>
+</html>
