@@ -29,14 +29,3 @@ git push origin main
 
 GitHub Pages refreshes 1–2 minutes after a push. Hard refresh (Ctrl+F5) to bypass cache.
 
-## Content notes
-
-- Resume wording is the source of truth for experience bullets.
-- No employer-internal report, class or endpoint names; company name only.
-- Phone number is intentionally not listed.
-
-## Todo
-
-- Resume download button (needs a hosted PDF, e.g. `resume.pdf` in this repo)
-- Check drawer, mobile layout and dark mode in a real browser and on a phone
-- Optional: custom domain, project screenshots
